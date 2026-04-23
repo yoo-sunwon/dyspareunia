@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>부부가 같이하는 설문지</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: #f5f0f4;
+    font-size: 16px;
+    color: #222;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  header {
+    background: #8e3a59;
+    color: #fff;
+    text-align: center;
+    padding: 22px 16px 18px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  .hospital {
+    color: #ffd6e7;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    margin-bottom: 6px;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    margin-top: 6px;
+    opacity: 0.85;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  main {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px 14px 40px;
+  }
+
+  .intro-card {
+    background: #fff;
+    padding: 14px 16px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    border-left: 4px solid #8e3a59;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.5;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8e3a59;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 18px 0 8px 2px;
+  }
+
+  .card {
+    background: #fff;
+    padding: 14px 16px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .card p {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+  }
+
+  .q-num {
+    display: inline-block;
+    background: #8e3a59;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    margin-right: 7px;
+    flex-shrink: 0;
+  }
+
+  .q-title {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .q-text {
+    flex: 1;
+  }
+
+  .toggle-wrap {
+    display: flex;
+    gap: 6px;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 9px 0;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: center;
+  }
+
+  .toggle-btn.selected {
+    border-color: #c45a5a;
+    background: #fff0f4;
+    color: #c45a5a;
+  }
+
+  .toggle-btn.unselected {
+    border-color: #eee;
+    background: #fafafa;
+    color: #ccc;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 17px;
+    background: linear-gradient(135deg, #8e3a59, #c45a7a);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 800;
+    margin-top: 18px;
+    cursor: pointer;
+    letter-spacing: -0.3px;
+    box-shadow: 0 4px 16px rgba(142,58,89,0.35);
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+
+  .submit-btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(142,58,89,0.25);
+  }
+
+  .result-section { margin-top: 20px; }
+
+  .result-fade {
+    animation: fadeUp 0.4s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-box {
+    padding: 16px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+  }
+
+  .result-box h3 {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .result-box p, .result-box li {
+    font-size: 14px;
+    line-height: 1.65;
+    color: #333;
+  }
+
+  .result-box ul {
+    padding-left: 18px;
+  }
+
+  .result-box li {
+    margin-bottom: 5px;
+  }
+
+  .r-score    { background: #fce4ec; border-left: 4px solid #c45a5a; }
+  .r-status   { background: #f3e5f5; border-left: 4px solid #8e3a59; }
+  .r-treatment{ background: #fff3e0; border-left: 4px solid #e67e22; }
+  .r-message  { background: #e8f5e9; border-left: 4px solid #2d7a55; }
+
+  .type-badge {
+    display: inline-block;
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hospital">🏥 HJ매그놀리아 국제병원 산부인과</div>
+  <h1>💑 부부가 같이하는 설문지</h1>
+  <div class="subtitle">성건강 클리닉 · 질건조증 자가진단</div>
+</header>
+
+<main>
+
+  <div class="intro-card">
+    부부가 함께 답변하시거나, 각각 작성한 후 서로의 생각을 편안하게 나누어 보세요 😊
+  </div>
+
+  <div id="questions-wrap"></div>
+
+  <button class="submit-btn" onclick="analyze()">결과 보기 →</button>
+
+  <div class="result-section" id="result-section">
+    <div class="result-box r-message" id="r-message"></div>
+    <div class="result-box r-score"   id="r-score"></div>
+    <div class="result-box r-status"  id="r-status"></div>
+    <div class="result-box r-treatment" id="r-treatment"></div>
+  </div>
+
+</main>
+
+<script>
+const questions = [
+  { text: "성관계할 때 질이 건조하다고 느낀다", group: "신체 증상" },
+  { text: "성관계할 때 통증이나 불편함이 있다", group: "신체 증상" },
+  { text: "예전에 비해 성생활에 대한 기대나 관심이 줄었다", group: "신체 증상" },
+  { text: "상대방이 나를 피하는 것처럼 느껴진다", group: "관계 소통" },
+  { text: "요즘 배우자와 감정적으로 거리가 느껴진다", group: "관계 소통" },
+  { text: "배우자가 겪는 불편함(건조, 통증 등)을 이해하고 있다", group: "관계 소통" },
+  { text: "성관계를 피하는 이유가 감정보다는 신체적인 문제일 수 있다고 생각한다", group: "이해와 공감" },
+  { text: "성생활에 대해 배우자와 편하게 이야기할 수 있다", group: "이해와 공감" },
+  { text: "배우자의 입장에서 상황을 생각해본다", group: "이해와 공감" },
+  { text: "성관계 시 윤활제나 도움 되는 방법을 사용하고 있다", group: "적극적 대처" },
+  { text: "성관계 외에도 스킨십(손잡기, 포옹 등)을 유지하려고 한다", group: "적극적 대처" },
+  { text: "질건조증이나 관련 치료에 대해 알아본 적이 있다", group: "적극적 대처" },
+];
+
+const groupLabels = {
+  "신체 증상":  "🩺 신체 증상 체크",
+  "관계 소통":  "💬 관계 소통 체크",
+  "이해와 공감":"🤝 이해와 공감 체크",
+  "적극적 대처":"💡 적극적 대처 체크",
+};
+
+// 0=미선택, 1=아니오(0점), 2=조금(1점), 3=매우(2점)
+const answers = new Array(12).fill(null);
+let lastGroup = "";
+const wrap = document.getElementById("questions-wrap");
+
+const opts = [
+  { label: "아니오", val: 0 },
+  { label: "조금 그렇다", val: 1 },
+  { label: "매우 그렇다", val: 2 },
+];
+
+questions.forEach((q, i) => {
+  if (q.group !== lastGroup) {
+    const label = document.createElement("div");
+    label.className = "section-label";
+    label.textContent = groupLabels[q.group];
+    wrap.appendChild(label);
+    lastGroup = q.group;
+  }
+
+  const card = document.createElement("div");
+  card.className = "card";
+
+  let btnHtml = `<div class="toggle-wrap">`;
+  opts.forEach((opt, j) => {
+    btnHtml += `<button class="toggle-btn" id="btn-${i}-${j}" onclick="setAnswer(${i}, ${j}, ${opt.val})">${opt.label}</button>`;
+  });
+  btnHtml += `</div>`;
+
+  card.innerHTML = `
+    <div class="q-title">
+      <span class="q-num">${i + 1}</span>
+      <span class="q-text"><p>${q.text}</p></span>
+    </div>
+    ${btnHtml}
+  `;
+  wrap.appendChild(card);
+});
+
+function setAnswer(i, selectedJ, val) {
+  answers[i] = val;
+  opts.forEach((_, j) => {
+    const btn = document.getElementById(`btn-${i}-${j}`);
+    btn.className = j === selectedJ ? "toggle-btn selected" : "toggle-btn unselected";
+  });
+}
+
+function analyze() {
+  for (let i = 0; i < questions.length; i++) {
+    if (answers[i] === null) {
+      alert("모든 문항을 선택해주세요");
+      return;
+    }
+  }
+
+  const total = answers.reduce((a, b) => a + b, 0);
+
+  let status, treatment, badge;
+
+  if (total < 8) {
+    badge = "🔴 성생활 단절 위험 단계";
+    status = "전반적으로 불편함과 소통 부재가 심한 상태입니다. 신체적 원인(질건조증)을 먼저 확인하고, 부부 상담도 함께 권장합니다.";
+    treatment = `<ul>
+      <li>질 에스트로겐 치료 적극 고려</li>
+      <li>산부인과 전문의 상담 권장</li>
+      <li>부부 관계 상담 병행</li>
+    </ul>`;
+  } else if (total < 16) {
+    badge = "🟡 중등도 문제 단계";
+    status = "신체적 불편함과 소통의 어려움이 일부 있는 상태입니다. 적절한 치료와 꾸준한 대화로 충분히 개선될 수 있습니다.";
+    treatment = `<ul>
+      <li>윤활제 · 보습제 꾸준히 사용</li>
+      <li>필요시 호르몬 치료 검토</li>
+      <li>부부 대화 시간 늘리기</li>
+    </ul>`;
+  } else {
+    badge = "🟢 양호 / 예방 단계";
+    status = "현재 상태가 비교적 건강합니다. 지금처럼 서로를 이해하고 소통하는 노력을 꾸준히 이어가세요.";
+    treatment = `<ul>
+      <li>현재 상태 유지 및 예방 관리</li>
+      <li>정기적인 산부인과 검진</li>
+      <li>지속적인 대화와 스킨십 유지</li>
+    </ul>`;
+  }
+
+  document.getElementById("r-message").innerHTML =
+    `<h3>💑 설문에 참여해 주셔서 감사합니다</h3>
+     <p>두 분이 함께 답변하셨다면 정말 훌륭한 부부입니다! 산부인과 의사와 상의하면 좋은 해결책이 있습니다 😊</p>`;
+
+  document.getElementById("r-score").innerHTML =
+    `<h3>📊 총점</h3>
+     <div class="type-badge">${badge}</div>
+     <p>총점: <b>${total}점</b> (0~24점 범위)</p>`;
+
+  document.getElementById("r-status").innerHTML =
+    `<h3>🔍 상태 설명</h3><p>${status}</p>`;
+
+  document.getElementById("r-treatment").innerHTML =
+    `<h3>📌 치료 방향</h3>${treatment}`;
+
+  // 결과 카드에 애니메이션 적용
+  document.querySelectorAll("#result-section .result-box").forEach((el, i) => {
+    el.style.animationDelay = `${i * 0.08}s`;
+    el.classList.add("result-fade");
+  });
+}
+</script>
+
+</body>
+</html>
